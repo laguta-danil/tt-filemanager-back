@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @unique @default(autoincrement())
+  email    String
+  password String
+  folders  Folder[]
+  sharedWithMe Shared?
+
+  @@map("user")
+}
+
+model Folder {
+  id           Int                      @id @unique @default(autoincrement())
+  creator      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folderName   String                   @default("folderName")
+  insideFolder folderToFolderRelation[] @relation("mainFolder")
+  userId       Int
+  folders      folderToFolderRelation[] @relation("folderInside")
+  files        folderToFileRelation[]
+  mainFolder   Boolean?
+
+  @@map("folder")
+}
+
+model folderToFolderRelation {
+  id               Int    @id @unique @default(autoincrement())
+  folder           Folder @relation("mainFolder", fields: [folderId], references: [id], onDelete: Cascade)
+  folderId         Int
+  folderInside     Folder @relation("folderInside", fields: [folderInsideId], references: [id], onDelete: Cascade)
+  folderInsideId   Int
+  folderInsideName String 
+}
+
+model folderToFileRelation {
+  id         Int      @id @unique @default(autoincrement())
+  folder     Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId   Int
+  file       File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  previewImg String   @default("https://raffle-management-develop.s3.eu-north-1.amazonaws.com/4735499.png")
+  fileId     Int
+  fileName   String
+}
+
+model File {
+  id             Int                    @id @unique @default(autoincrement())
+  fileName       String
+  fileExtensions String
+  folders        folderToFileRelation[]
+
+  @@map("file")
+}
+
+model Shared {
+  id     Int  @id @unique @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
