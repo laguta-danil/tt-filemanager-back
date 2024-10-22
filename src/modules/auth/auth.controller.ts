@@ -19,12 +19,13 @@ export class AuthController {
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
-  googleLogin() { }
+  googleLogin() { console.log('login test logs in vercel') }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   googleCallback(@UserId() userId, @Res() response: Response) {
     const cookie = this.authService.getCookieWithJwtToken(userId);
+    console.log('login test cookie  logs in vercel', cookie)
     response.setHeader('Set-Cookie', cookie);
     response.redirect(process.env.FRONTEND_URL);
   }
