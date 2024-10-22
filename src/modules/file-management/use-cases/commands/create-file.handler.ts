@@ -35,8 +35,7 @@ export class StoreFileCommandHandler
     await this.fileRepository.checkDuplicateNames({
       name: file.originalname,
       folderId,
-    })
-
+    });
 
     try {
       await fs.mkdir(uploadDir + '/' + userId, { recursive: true });
@@ -55,7 +54,7 @@ export class StoreFileCommandHandler
       //   fileName: file.originalname,
       //   folderId,
       // }),
-    ])
+    ]);
 
 
     try {
@@ -95,11 +94,10 @@ export class StoreFileCommandHandler
         }),
       );
 
-
       // удаляем основное фото с диска
       await fs.unlink(fileLink);
     } catch (e) {
-      console.log('something went wrong')
+      console.log('something went wrong');
     }
   }
 }
