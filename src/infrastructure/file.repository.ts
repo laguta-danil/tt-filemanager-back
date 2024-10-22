@@ -13,7 +13,7 @@ export class FileRepository {
     fileExtensions: string;
     fileName: string;
     folderId: number;
-    previewImg: string
+    previewImg: string;
   }) {
     const newFile = await this.prisma.file.create({
       data: { fileExtensions: fileExtensions, fileName: fileName },
