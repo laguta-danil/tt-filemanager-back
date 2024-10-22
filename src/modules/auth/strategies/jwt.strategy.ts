@@ -18,8 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { userId: number }) {
+    console.log(payload)
     try {
-      return this.userRepository.findUserById(payload.userId);
+      const user = this.userRepository.findUserById(payload.userId);
+      console.log(user)
+      return user
     } catch (e) {
       throw new HttpException(
         'User with this id does not exist',
