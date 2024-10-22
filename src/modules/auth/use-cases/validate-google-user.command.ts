@@ -1,20 +1,19 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { User } from '@prisma/client';
-import { UserRepository } from 'src/infrastructure/user.repository';
+import { UserRepository } from '../../../infrastructure/user.repository';
 import * as bcrypt from 'bcrypt';
-import { FileRepository } from 'src/infrastructure/file.repository';
+import { FileRepository } from '../../../infrastructure/file.repository';
 
 export class ValidateGoogleUserCommand implements ICommand {
-  constructor(public readonly googleUserProfile: any) {}
+  constructor(public readonly googleUserProfile: any) { }
 }
 @CommandHandler(ValidateGoogleUserCommand)
 export class ValidateGoogleUserCommandHandler
-  implements ICommandHandler<ValidateGoogleUserCommand, User>
-{
+  implements ICommandHandler<ValidateGoogleUserCommand, User> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly fileRepository: FileRepository,
-  ) {}
+  ) { }
 
   async execute({ googleUserProfile }): Promise<User> {
     const user = await this.userRepository.findUserByEmail(

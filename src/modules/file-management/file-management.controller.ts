@@ -14,7 +14,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { StoreFileCommand } from './use-cases/commands/create-file.handler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateFileNameDto } from './dto/update-file-name.dto';
-import { UserId } from 'src/decorators/auth.decorator';
+import { UserId } from '../../decorators/auth.decorator';
 import JwtAuthenticationGuard from '../auth/guards/jwt-auth.guard';
 import { StoreFileDto } from './dto/store-file.dto';
 import { getMainUserFolderQuery } from './use-cases/querys/get-main-user-folder.query';

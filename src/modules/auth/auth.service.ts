@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from 'src/infrastructure/user.repository';
+import { UserRepository } from '../../infrastructure/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   public getCookieWithJwtToken(userId: number) {
     const payload: { userId: number } = { userId };

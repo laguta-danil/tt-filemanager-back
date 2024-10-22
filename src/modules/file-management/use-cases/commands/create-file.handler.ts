@@ -2,8 +2,8 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { promises as fs } from 'fs';
 import sharp from 'sharp';
-import { FileRepository } from 'src/infrastructure/file.repository';
-import { AwsS3Service } from 'src/modules/awsS3/aws.s3.service';
+import { FileRepository } from '../../../../infrastructure/file.repository';
+import { AwsS3Service } from '../../../awsS3/aws.s3.service';
 
 export class StoreFileCommand implements ICommand {
   constructor(

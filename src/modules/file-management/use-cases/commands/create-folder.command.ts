@@ -1,5 +1,5 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { FileRepository } from 'src/infrastructure/file.repository';
+import { FileRepository } from '../../../../infrastructure/file.repository';
 
 export class CreateFolderCommand implements ICommand {
   constructor(

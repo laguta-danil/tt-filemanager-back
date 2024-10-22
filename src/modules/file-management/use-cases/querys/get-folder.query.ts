@@ -1,14 +1,13 @@
 import { ICommandHandler, IQuery, QueryHandler } from '@nestjs/cqrs';
-import { FileRepository } from 'src/infrastructure/file.repository';
+import { FileRepository } from '../../../../infrastructure/file.repository';
 
 export class getFolderQuery implements IQuery {
-  constructor(public readonly data: { folderId: number; userId: number }) {}
+  constructor(public readonly data: { folderId: number; userId: number }) { }
 }
 @QueryHandler(getFolderQuery)
 export class getFolderQueryHandler
-  implements ICommandHandler<getFolderQuery, void>
-{
-  constructor(private readonly fileRepository: FileRepository) {}
+  implements ICommandHandler<getFolderQuery, void> {
+  constructor(private readonly fileRepository: FileRepository) { }
 
   async execute({ data }: getFolderQuery): Promise<any> {
     const { folderId, userId } = data;

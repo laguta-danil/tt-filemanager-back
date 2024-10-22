@@ -11,15 +11,15 @@ import { Response } from 'express';
 import JwtAuthenticationGuard from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LocalAuthenticationGuard } from './guards/local-auth.guard';
-import { UserId } from 'src/decorators/auth.decorator';
+import { UserId } from '../../decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
-  googleLogin() {}
+  googleLogin() { }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')

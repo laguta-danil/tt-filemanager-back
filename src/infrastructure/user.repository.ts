@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { CreateUserDto } from 'src/modules/user-management/dto/create-user.dto';
-import { PrismaService } from 'src/providers/database/prisma.service';
+import { CreateUserDto } from '../modules/user-management/dto/create-user.dto';
+import { PrismaService } from '../providers/database/prisma.service';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async deleteUserById(id: number) {
     await this.prisma.user.delete({

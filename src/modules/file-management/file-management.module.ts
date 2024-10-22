@@ -1,11 +1,11 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { FileManagementController } from './file-management.controller';
-import { PrismaService } from 'src/providers/database/prisma.service';
+import { PrismaService } from '../../providers/database/prisma.service';
 import { CqrsModule } from '@nestjs/cqrs';
 import { promises as fs } from 'fs';
-import { UserRepository } from 'src/infrastructure/user.repository';
+import { UserRepository } from '../../infrastructure/user.repository';
 import { AuthModule } from '../auth/auth.module';
-import { FileRepository } from 'src/infrastructure/file.repository';
+import { FileRepository } from '../../infrastructure/file.repository';
 import { StoreFileCommandHandler } from './use-cases/commands/create-file.handler';
 import { getMainUserFolderQueryHandler } from './use-cases/querys/get-main-user-folder.query';
 import { CreateFolderCommandHandler } from './use-cases/commands/create-folder.command';

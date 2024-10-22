@@ -1,18 +1,17 @@
 import { ICommandHandler, IQuery, QueryHandler } from '@nestjs/cqrs';
 import { User } from '@prisma/client';
-import { UserRepository } from 'src/infrastructure/user.repository';
+import { UserRepository } from '../../../infrastructure/user.repository';
 import * as bcrypt from 'bcrypt';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class AuthUserQuery implements IQuery {
-  constructor(public readonly userData: { email: string; password: string }) {}
+  constructor(public readonly userData: { email: string; password: string }) { }
 }
 
 @QueryHandler(AuthUserQuery)
 export class AuthenticatedUserQueryHandler
-  implements ICommandHandler<AuthUserQuery, User>
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements ICommandHandler<AuthUserQuery, User> {
+  constructor(private readonly userRepository: UserRepository) { }
 
   async execute({ userData }): Promise<User> {
     const { email, password } = userData;
