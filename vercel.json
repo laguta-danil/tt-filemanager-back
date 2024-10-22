@@ -2,7 +2,10 @@
   "version": 2,
   "env": {
     "DATABASE_URL": "postgresql://postgres.teevgcvmivqcooecwctm:realsolftDB1@aws-0-eu-central-1.pooler.supabase.com:6543/postgres",
-    "DIRECT_URL": "postgresql://postgres.teevgcvmivqcooecwctm:realsolftDB1@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
+    "DIRECT_URL": "postgresql://postgres.teevgcvmivqcooecwctm:realsolftDB1@aws-0-eu-central-1.pooler.supabase.com:5432/postgres",
+    "GOOGLE_CLIENT_ID": "982945909959-r4q5vn2hf2kq6bi44mf2ikmqo9p6etbf.apps.googleusercontent.com",
+    "GOOGLE_CALLBACK_URL": "http://localhost:3000/auth/google/callback",
+    "FRONTEND_URL": "https://funny-presumably-drake.ngrok-free.app"
   },
   "builds": [
     {
