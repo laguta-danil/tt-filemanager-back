@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  Logger,
   Post,
   Res,
   UseGuards,
@@ -15,17 +16,19 @@ import { UserId } from '../../decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: Logger) { }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
-  googleLogin() { console.log('login test logs in vercel') }
+  googleLogin() { }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   googleCallback(@UserId() userId, @Res() response: Response) {
     const cookie = this.authService.getCookieWithJwtToken(userId);
-    console.log('login test cookie  logs in vercel', cookie)
+    this.logger.log(cookie)
     response.setHeader('Set-Cookie', cookie);
     response.redirect(process.env.FRONTEND_URL);
   }

@@ -1,12 +1,13 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Request } from 'express';
 import { UserRepository } from '../../../infrastructure/user.repository';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly userRepository: UserRepository) {
+  constructor(private readonly userRepository: UserRepository,
+    private readonly logger: Logger) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
@@ -18,10 +19,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { userId: number }) {
-    console.log(payload)
+    this.logger.log('payload', payload)
     try {
       const user = this.userRepository.findUserById(payload.userId);
-      console.log(user)
+      this.logger.log('user', user)
       return user
     } catch (e) {
       throw new HttpException(

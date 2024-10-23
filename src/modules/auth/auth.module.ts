@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthController } from './auth.controller';
@@ -34,6 +34,7 @@ const strategies = [GoogleStrategy, LocalStrategy, JwtStrategy];
     FileRepository,
     PrismaService,
     AuthService,
+    Logger,
   ],
 })
 export class AuthModule { }
