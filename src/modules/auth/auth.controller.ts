@@ -27,13 +27,9 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   googleCallback(@UserId() userId, @Res() response: Response) {
-    const token = this.authService.getCookieWithJwtToken(userId);
-    this.logger.log(token)
-    response.cookie('Authentication', token, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true
-    });
+    const cookie = this.authService.getCookieWithJwtToken(userId);
+    this.logger.log(cookie)
+    response.setHeader('Set-Cookie', cookie);
     response.redirect(process.env.FRONTEND_URL);
   }
 
