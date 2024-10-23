@@ -10,12 +10,12 @@ export class UserController {
     private readonly queryBus: QueryBus,
     private readonly logger: Logger) { }
 
-  // @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard)
   @Get()
-  async getUser(@Req() req) {
-    this.logger.warn(req)
+  async getUser(@Req() req, @UserId() userId) {
+    this.logger.warn(req.cookie)
     // const user = await this.queryBus.execute(new GetUserQuery(userId));
 
-    return { email: 'sdfa' };
+    return { email: user.email };
   }
 }

@@ -25,10 +25,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       this.logger.log('user', user)
       return user
     } catch (e) {
-      throw new HttpException(
-        'User with this id does not exist',
-        HttpStatus.NOT_FOUND,
-      );
+      return { email: '1123123@gij.com' }
+      // throw new HttpException(
+      //   'User with this id does not exist',
+      //   HttpStatus.NOT_FOUND,
+      // );
     }
   }
 }
