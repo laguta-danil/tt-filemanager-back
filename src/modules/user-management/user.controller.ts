@@ -16,6 +16,6 @@ export class UserController {
     this.logger.warn(req.cookie)
     // const user = await this.queryBus.execute(new GetUserQuery(userId));
 
-    return { email: user.email };
+    return { email: "user.email" };
   }
 }

@@ -20,16 +20,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: { userId: number }) {
     this.logger.log('payload', payload)
-    try {
-      const user = await this.userRepository.findUserById(payload.userId);
-      this.logger.log('user', user)
-      return user
-    } catch (e) {
-      return { email: '1123123@gij.com' }
-      // throw new HttpException(
-      //   'User with this id does not exist',
-      //   HttpStatus.NOT_FOUND,
-      // );
-    }
+    // try {
+    const user = await this.userRepository.findUserById(payload.userId);
+    this.logger.log('user', user)
+    return { email: '23123@gmail.com', password: '123123' }
+    // } catch (e) {
+    // return { email: '1123123@gij.com' }
+    // throw new HttpException(
+    //   'User with this id does not exist',
+    //   HttpStatus.NOT_FOUND,
+    // );
+    // }
   }
 }
