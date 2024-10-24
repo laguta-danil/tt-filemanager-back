@@ -2,10 +2,9 @@ import {
   Controller,
   Get,
   HttpCode,
-  Logger,
   Post,
   Res,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { Response } from 'express';
@@ -16,9 +15,7 @@ import { UserId } from '../../decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly logger: Logger) { }
+  constructor(private readonly authService: AuthService) { }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
@@ -28,8 +25,8 @@ export class AuthController {
   @Get('google/callback')
   googleCallback(@UserId() userId, @Res() response: Response) {
     const cookie = this.authService.getCookieWithJwtToken(userId);
-    this.logger.log(cookie)
     response.setHeader('Set-Cookie', cookie);
+    console.log(cookie)
     response.redirect(process.env.FRONTEND_URL);
   }
 
@@ -39,6 +36,7 @@ export class AuthController {
   async logIn(@UserId() userId, @Res() response: Response) {
     const cookie = this.authService.getCookieWithJwtToken(userId);
     response.setHeader('Set-Cookie', cookie);
+
 
     return response.sendStatus(200);
   }

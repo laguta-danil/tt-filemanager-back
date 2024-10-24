@@ -1,37 +1,31 @@
-import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { User } from '@prisma/client';
-import { UserRepository } from '../../../infrastructure/user.repository';
-import * as bcrypt from 'bcrypt';
-import { FileRepository } from '../../../infrastructure/file.repository';
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
+import { User } from '@prisma/client'
+import { UserRepository } from '../../../infrastructure/user.repository'
+import * as bcrypt from 'bcrypt'
+import { FileRepository } from '../../../infrastructure/file.repository'
 
 export class ValidateGoogleUserCommand implements ICommand {
-  constructor(public readonly googleUserProfile: any) { }
+  constructor(public readonly googleUserProfile: any) {}
 }
 @CommandHandler(ValidateGoogleUserCommand)
-export class ValidateGoogleUserCommandHandler
-  implements ICommandHandler<ValidateGoogleUserCommand, User> {
-  constructor(
-    private readonly userRepository: UserRepository,
-    private readonly fileRepository: FileRepository,
-  ) { }
+export class ValidateGoogleUserCommandHandler implements ICommandHandler<ValidateGoogleUserCommand, User> {
+  constructor(private readonly userRepository: UserRepository, private readonly fileRepository: FileRepository) {}
 
   async execute({ googleUserProfile }): Promise<User> {
-    const user = await this.userRepository.findUserByEmail(
-      googleUserProfile._json.email,
-    );
+    const user = await this.userRepository.findUserByEmail(googleUserProfile._json.email)
 
     if (user !== null) {
-      return user;
+      return user
     }
 
-    const hashedPassword = await bcrypt.hash('123123', 10);
+    const hashedPassword = await bcrypt.hash('123123', 10)
     const newUser = await this.userRepository.createNewUser({
       email: googleUserProfile._json.email,
-      password: hashedPassword,
-    });
+      password: hashedPassword
+    })
 
-    await this.fileRepository.createMainFolder({ userId: newUser.id });
+    await this.fileRepository.createMainFolder({ userId: newUser.id })
 
-    return newUser;
+    return newUser
   }
 }

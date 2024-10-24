@@ -1,38 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { CreateUserDto } from '../modules/user-management/dto/create-user.dto';
-import { PrismaService } from '../providers/database/prisma.service';
+import { Injectable } from '@nestjs/common'
+import { User } from '@prisma/client'
+import { CreateUserDto } from '../modules/user-management/dto/create-user.dto'
+import { PrismaService } from '../providers/database/prisma.service'
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async deleteUserById(id: number) {
     await this.prisma.user.delete({
-      where: { id },
-    });
+      where: { id }
+    })
   }
 
   async createNewUser(userData: CreateUserDto): Promise<User> {
     return await this.prisma.user.create({
-      data: userData,
-    });
+      data: userData
+    })
   }
 
   async updateUser(userData: Partial<User>, userTgId: number): Promise<User> {
     return this.prisma.user.update({
       where: { id: userTgId },
-      data: userData,
-    });
+      data: userData
+    })
   }
 
   async findUserByEmail(email: string) {
     return this.prisma.user.findFirst({
-      where: { email: email },
-    });
+      where: { email: email }
+    })
   }
 
   async findUserById(id: number) {
-    return this.prisma.user.findFirst({ where: { id } });
+    return this.prisma.user.findFirst({ where: { id } })
   }
 }
