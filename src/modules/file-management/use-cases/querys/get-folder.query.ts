@@ -2,11 +2,11 @@ import { ICommandHandler, IQuery, QueryHandler } from '@nestjs/cqrs'
 import { FileRepository } from '../../../../infrastructure/file.repository'
 
 export class getFolderQuery implements IQuery {
-  constructor(public readonly data: { folderId: number; userId: number }) {}
+  constructor(public readonly data: { folderId: number; userId: number }) { }
 }
 @QueryHandler(getFolderQuery)
 export class getFolderQueryHandler implements ICommandHandler<getFolderQuery, void> {
-  constructor(private readonly fileRepository: FileRepository) {}
+  constructor(private readonly fileRepository: FileRepository) { }
 
   async execute({ data }: getFolderQuery): Promise<any> {
     const { folderId, userId } = data
@@ -17,11 +17,11 @@ export class getFolderQueryHandler implements ICommandHandler<getFolderQuery, vo
       folderId
     })
 
-    const currentFolder = await this.fileRepository.findFolderById(folderId)
+    const currentFolder = await this.fileRepository.getFolderById(folderId)
 
     const [folders, files] = await Promise.all([
-      await this.fileRepository.findRelatedFolders(folderId),
-      await this.fileRepository.findRelatedFiles(folderId)
+      await this.fileRepository.getRelatedFolders(folderId),
+      await this.fileRepository.getRelatedFiles(folderId)
     ])
 
     return { currentFolder, folders, files }

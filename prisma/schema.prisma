@@ -33,27 +33,33 @@ model Folder {
   folders      folderToFolderRelation[] @relation("folderInside")
   files        folderToFileRelation[]
   mainFolder   Boolean?
+  createdAt    DateTime
+  updatedAt    DateTime?
 
   @@map("folder")
+  @@unique([id, folderName])
 }
 
 model folderToFolderRelation {
   id               Int    @id @unique @default(autoincrement())
   folder           Folder @relation("mainFolder", fields: [folderId], references: [id], onDelete: Cascade)
   folderId         Int
-  folderInside     Folder @relation("folderInside", fields: [folderInsideId], references: [id], onDelete: Cascade)
+  folderInside     Folder @relation("folderInside", fields: [folderInsideId, folderName], references: [id, folderName], onDelete: Cascade)
   folderInsideId   Int
-  folderInsideName String 
+  folderName       String
+  @@map("folder_to_folder")
 }
 
 model folderToFileRelation {
   id         Int      @id @unique @default(autoincrement())
   folder     Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
   folderId   Int
-  file       File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  previewImg String   @default("https://raffle-management-develop.s3.eu-north-1.amazonaws.com/4735499.png")
+  file       File     @relation(fields: [fileId, fileUrl, fileName], references: [id, s3Url, fileName ], onDelete: Cascade)
   fileId     Int
+  fileUrl    String
   fileName   String
+
+  @@map("folder_to_file")
 }
 
 model File {
@@ -61,8 +67,12 @@ model File {
   fileName       String
   fileExtensions String
   folders        folderToFileRelation[]
+  s3Url          String
+  createdAt      DateTime
+  updatedAt      DateTime?
 
   @@map("file")
+  @@unique([id, s3Url, fileName])
 }
 
 model Shared {

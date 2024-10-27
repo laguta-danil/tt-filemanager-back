@@ -26,7 +26,6 @@ export class AuthController {
   googleCallback(@UserId() userId, @Res() response: Response) {
     const cookie = this.authService.getCookieWithJwtToken(userId);
     response.setHeader('Set-Cookie', cookie);
-    console.log(cookie)
     response.redirect(process.env.FRONTEND_URL);
   }
 

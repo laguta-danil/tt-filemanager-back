@@ -1,6 +1,4 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
-import { promises as fs } from 'fs'
-import sharp from 'sharp'
 import { FileRepository } from '../../../../infrastructure/file.repository'
 import { AwsS3Service } from '../../../awsS3/aws.s3.service'
 
@@ -35,26 +33,17 @@ export class StoreFileCommandHandler implements ICommandHandler<StoreFileCommand
       folderId
     })
 
-    // try {
-    //   await fs.mkdir(uploadDir + '/' + userId, { recursive: true })
-    // } catch (error) {
-    //   console.error(`Failed to create directory ${uploadDir}:`, error)
-    // }
-
-
-
     try {
       const imgUrl = await this.aswS3Service.uploadFile({ file, userId })
-      console.log(imgUrl)
 
-      await this.fileRepository.addFile({
+      await this.fileRepository.createFile({
         fileExtensions: file.mimetype,
         fileName: file.originalname,
-        folderId, previewImg: imgUrl
+        folderId: folderId, s3Url: imgUrl
       })
 
-    } catch (e) {
-      console.log('something went wrong with AWS S3 storing', e)
+    } catch (error) {
+      console.log('Create file error', error)
     }
   }
 }

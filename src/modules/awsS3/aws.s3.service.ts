@@ -16,7 +16,7 @@ export class AwsS3Service {
     region: process.env.AWS_REGION
   })
 
-  async uploadFile(data: { file: Express.Multer.File, userId: number }) {
+  async uploadFile(data: { file: Express.Multer.File, userId: number }): Promise<string> {
     try {
       await this.s3.send(
         new PutObjectCommand({
@@ -32,8 +32,11 @@ export class AwsS3Service {
     }
   }
 
-  async copyFile(data: { fileName: 'string', fromUserId: number, toUserId: number }) {
-
+  async deleteFile(data: { fileName: string; userId: number }): Promise<void> {
+    await this.s3.deleteObject({
+      Bucket: this.bucketName,
+      Key: `${data.userId}/${data.fileName}`
+    })
   }
 
   removeDuplicates(data) {

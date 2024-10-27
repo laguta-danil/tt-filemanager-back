@@ -5,56 +5,74 @@ import { PrismaService } from '../providers/database/prisma.service'
 export class FileRepository {
   constructor(private readonly prisma: PrismaService) { }
 
-  async addFile({
+  async createFile({
     fileExtensions,
     fileName,
     folderId,
-    previewImg
+    s3Url
   }: {
     fileExtensions: string
     fileName: string
     folderId: number
-    previewImg: string
+    s3Url: string
   }) {
     const newFile = await this.prisma.file.create({
-      data: { fileExtensions: fileExtensions, fileName: fileName }
+      data: {
+        fileExtensions: fileExtensions,
+        fileName: fileName,
+        s3Url: s3Url,
+        createdAt: new Date()
+      }
     })
 
     await this.prisma.folderToFileRelation.create({
       data: {
         folderId: folderId,
         fileId: newFile.id,
-        fileName: newFile.fileName,
-        previewImg
+        fileUrl: s3Url,
+        fileName
       }
     })
   }
 
-  async createMainFolder({ userId }: { userId: number }) {
-    return this.prisma.folder.create({
-      data: { userId: userId, mainFolder: true }
-    })
+  async getFileById(fileId: number) {
+    return this.prisma.file.findFirstOrThrow({ where: { id: fileId } })
   }
 
-  async findUserMainFolder(userId: number) {
+  async updateFileName(data: { fileId: number, newFileName: string }) {
+    await this.prisma.file.update({ where: { id: data.fileId }, data: { fileName: data.newFileName, } })
+  }
+
+  async createMainFolder({ userId }: { userId: number }) {
+    const mainFolder = await this.prisma.folder.create({
+      data: { userId: userId, mainFolder: true, createdAt: new Date() }
+    })
+
+    await this.getRelatedFiles(mainFolder.id)
+  }
+
+  async getUserMainFolder(userId: number) {
+
+
+
     return this.prisma.folder.findFirst({
       where: { userId: userId, mainFolder: true }
     })
   }
 
-  async findFolderById(folderId: number) {
+  async getFolderById(folderId: number) {
     return this.prisma.folder.findFirst({
       where: { id: folderId }
     })
   }
 
-  async findRelatedFolders(folderId: number) {
+  async getRelatedFolders(folderId: number) {
     return this.prisma.folderToFolderRelation.findMany({
       where: { folderId: folderId }
     })
   }
 
-  async findRelatedFiles(folderId: number) {
+  async getRelatedFiles(folderId: number) {
     return this.prisma.folderToFileRelation.findMany({
       where: { folderId: folderId }
     })
@@ -70,16 +88,20 @@ export class FileRepository {
     folderName: string
   }): Promise<void> {
     const newFolder = await this.prisma.folder.create({
-      data: { userId: userId, folderName: folderName, mainFolder: false }
+      data: { userId, folderName, mainFolder: false, createdAt: new Date() }
     })
 
     await this.prisma.folderToFolderRelation.create({
       data: {
         folderId: folderId,
         folderInsideId: newFolder.id,
-        folderInsideName: newFolder.folderName
+        folderName
       }
     })
+  }
+
+  async updateFolderName(data: { folderId: number, newFolderName: string }) {
+    await this.prisma.folder.update({ where: { id: data.folderId }, data: { folderName: data.newFolderName } })
   }
 
   async isUserFolder(data: { userId: number; folderId: number }): Promise<boolean> {
@@ -96,7 +118,7 @@ export class FileRepository {
 
   async checkDuplicateNames(data: { name: string; folderId: number }): Promise<void> {
     const isFolderNameExist = await this.prisma.folderToFolderRelation.findFirst({
-      where: { folderId: data.folderId, folderInsideName: data.name }
+      where: { folderId: data.folderId, folder: { folderName: data.name } }
     })
 
     if (isFolderNameExist) {
@@ -104,7 +126,8 @@ export class FileRepository {
     }
 
     const isFileNameExist = await this.prisma.folderToFileRelation.findFirst({
-      where: { folderId: data.folderId, fileName: data.name }
+      where: { folderId: data.folderId, file: { fileName: data.name } }
+
     })
 
     if (isFileNameExist) {
