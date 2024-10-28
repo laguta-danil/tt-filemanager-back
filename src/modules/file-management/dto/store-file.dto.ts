@@ -6,3 +6,5 @@ export class StoreFileDto {
   @Transform(({ value }) => Number(value))
   folderId: number
 }
+
+

@@ -36,11 +36,15 @@ export class FileRepository {
   }
 
   async getFileById(fileId: number) {
-    return this.prisma.file.findFirstOrThrow({ where: { id: fileId } })
+    return this.prisma.file.findFirstOrThrow({ where: { id: fileId, } })
   }
 
   async updateFileName(data: { fileId: number, newFileName: string }) {
     await this.prisma.file.update({ where: { id: data.fileId }, data: { fileName: data.newFileName, } })
+  }
+
+  async deleteFile(fileId: number) {
+    await this.prisma.file.delete({ where: { id: fileId } })
   }
 
   async createMainFolder({ userId }: { userId: number }) {
@@ -52,8 +56,6 @@ export class FileRepository {
   }
 
   async getUserMainFolder(userId: number) {
-
-
 
     return this.prisma.folder.findFirst({
       where: { userId: userId, mainFolder: true }
@@ -102,6 +104,10 @@ export class FileRepository {
 
   async updateFolderName(data: { folderId: number, newFolderName: string }) {
     await this.prisma.folder.update({ where: { id: data.folderId }, data: { folderName: data.newFolderName } })
+  }
+
+  async deleteFolder(data: { folderId: number, userId: number }) {
+    await this.prisma.folder.delete({ where: { id: data.folderId, userId: data.userId } })
   }
 
   async isUserFolder(data: { userId: number; folderId: number }): Promise<boolean> {

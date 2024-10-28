@@ -32,11 +32,17 @@ export class AwsS3Service {
     }
   }
 
-  async deleteFile(data: { fileName: string; userId: number }): Promise<void> {
-    await this.s3.deleteObject({
-      Bucket: this.bucketName,
-      Key: `${data.userId}/${data.fileName}`
-    })
+  async deleteFile(data: { fileName: string; userId: number, fileUrl: string }) {
+    try {
+      await this.s3.deleteObject({
+        Bucket: this.bucketName,
+        Key: `${data.userId}/${data.fileName}`
+      })
+    } catch (e) {
+      console.log(e)
+      throw new HttpException('AWS S3 Error', HttpStatus.CONFLICT)
+    }
+
   }
 
   removeDuplicates(data) {

@@ -22,6 +22,8 @@ import { CreateFolderCommand } from './use-cases/commands/create-folder.command'
 import { getFolderQuery } from './use-cases/querys/get-folder.query'
 import { updateFileCommand } from './use-cases/commands/update-file-name.command'
 import { updateFolderCommand } from './use-cases/commands/update-folder-name'
+import { deleteFileCommand } from './use-cases/commands/delete-file.command'
+import { deleteFolderCommand } from './use-cases/commands/delete-folder.command'
 
 @UseGuards(JwtAuthenticationGuard)
 @Controller('file-management')
@@ -47,6 +49,7 @@ export class FileManagementController {
 
   @Get()
   getUserMainPage(@UserId() userId) {
+    console.log(userId, 'test')
     return this.queryBus.execute(new getMainUserFolderQuery(userId))
   }
 
@@ -69,13 +72,14 @@ export class FileManagementController {
     return this.commandBus.execute(new updateFolderCommand({ userId, folderId: param.folderId, newFolderName: body.newFolderName }))
   }
 
-  @Delete('file/:fileId')
-  removeFile(@Param('fileId') fileId: string) {
-    return this.commandBus.execute(+fileId)
+  @Delete('file')
+  removeFile(@UserId() userId, @Body() body: { fileId: number }) {
+    console.log(body, 5)
+    return this.commandBus.execute(new deleteFileCommand({ fileId: body.fileId, userId }))
   }
 
-  @Delete('folder/:folderId')
-  removeFolder(@Param('folderId') folderId: string) {
-    return this.commandBus.execute(+folderId)
+  @Delete('folder')
+  removeFolder(@Body() body: { folderId: number }, @UserId() userId) {
+    return this.commandBus.execute(new deleteFolderCommand({ folderId: body.folderId, userId: userId }))
   }
 }

@@ -13,8 +13,10 @@ import { getFolderQueryHandler } from './use-cases/querys/get-folder.query'
 import { AwsS3Module } from '../awsS3/aws.s3.module'
 import { updateFileCommandHandler } from './use-cases/commands/update-file-name.command'
 import { updateFolderCommandHandler } from './use-cases/commands/update-folder-name'
+import { deleteFileCommandHandler } from './use-cases/commands/delete-file.command'
+import { deleteFolderCommandHandler } from './use-cases/commands/delete-folder.command'
 
-const fileManagementCommandHandlers = [StoreFileCommandHandler, CreateFolderCommandHandler, updateFileCommandHandler, updateFolderCommandHandler]
+const fileManagementCommandHandlers = [StoreFileCommandHandler, CreateFolderCommandHandler, updateFileCommandHandler, updateFolderCommandHandler, deleteFileCommandHandler, deleteFolderCommandHandler]
 
 const fileManagementQueryHandlers = [getMainUserFolderQueryHandler, getFolderQueryHandler]
 
