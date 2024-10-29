@@ -4,7 +4,7 @@ import { UserRepository } from '../../infrastructure/user.repository'
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepository: UserRepository, private readonly jwtService: JwtService) {}
+  constructor(private readonly userRepository: UserRepository, private readonly jwtService: JwtService) { }
 
   public getCookieWithJwtToken(userId: number) {
     const payload: { userId: number } = { userId }
@@ -13,6 +13,6 @@ export class AuthService {
   }
 
   public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0 Secure; SameSite=None`
   }
 }
