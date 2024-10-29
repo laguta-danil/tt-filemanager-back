@@ -27,7 +27,6 @@ export class getUserFolderQueryHandler implements ICommandHandler<getUserFolderQ
 
     const skip = (+1 - 1) * +1 || 0;
 
-    console.log(data.sortByFolderName, sortByFileName, 'wtf', data)
     const userFolder = await this.getUserFolder({ userId, mainPage, folderId })
 
     const [folders, files] = await Promise.all([

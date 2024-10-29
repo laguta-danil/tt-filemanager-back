@@ -30,7 +30,7 @@ export class FolderRepository {
 
         const [folders, count] = await this.prisma.$transaction([
             this.prisma.folderToFolderRelation.findMany({
-                orderBy: [{ folderName: 'asc' }],
+                orderBy: [{ folderName: sortByFolderName }],
                 // skip: skip,
                 // take: take,
                 where: { folderId: folderId, folderName: { contains: `${search}`, mode: 'insensitive' } }
