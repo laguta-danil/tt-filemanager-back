@@ -43,9 +43,9 @@ export class AuthController {
   @UseGuards(JwtAuthenticationGuard)
   @Get('logout')
   async logOut(@Res() response: Response) {
-    const cookie = this.authService.getCookieForLogOut()
-    response.setHeader('Set-Cookie', cookie);
-
-    return response.sendStatus(200);
+    response.clearCookie('Authentication', {
+      secure: true,
+      sameSite: 'none',
+    }).send();
   }
 }
