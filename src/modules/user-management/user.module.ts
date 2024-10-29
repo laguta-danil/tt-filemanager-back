@@ -10,4 +10,4 @@ import { PrismaService } from '../../providers/database/prisma.service'
   controllers: [UserController],
   providers: [GetUserQueryHandler, UserRepository, PrismaService, Logger]
 })
-export class UserModule {}
+export class UserModule { }

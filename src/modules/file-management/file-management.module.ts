@@ -7,20 +7,20 @@ import { UserRepository } from '../../infrastructure/user.repository'
 import { AuthModule } from '../auth/auth.module'
 import { FileRepository } from '../../infrastructure/file.repository'
 import { StoreFileCommandHandler } from './use-cases/commands/create-file.command'
-import { getMainUserFolderQueryHandler } from './use-cases/querys/get-main-user-folder.query'
+import { getUserFolderQueryHandler } from './use-cases/querys/get-user-folder.query'
 import { CreateFolderCommandHandler } from './use-cases/commands/create-folder.command'
-import { getFolderQueryHandler } from './use-cases/querys/get-folder.query'
 import { AwsS3Module } from '../awsS3/aws.s3.module'
 import { updateFileCommandHandler } from './use-cases/commands/update-file-name.command'
 import { updateFolderCommandHandler } from './use-cases/commands/update-folder-name'
 import { deleteFileCommandHandler } from './use-cases/commands/delete-file.command'
 import { deleteFolderCommandHandler } from './use-cases/commands/delete-folder.command'
+import { FolderRepository } from '../../infrastructure/folder.repository'
 
 const fileManagementCommandHandlers = [StoreFileCommandHandler, CreateFolderCommandHandler, updateFileCommandHandler, updateFolderCommandHandler, deleteFileCommandHandler, deleteFolderCommandHandler]
 
-const fileManagementQueryHandlers = [getMainUserFolderQueryHandler, getFolderQueryHandler]
+const fileManagementQueryHandlers = [getUserFolderQueryHandler]
 
-const repositories = [UserRepository, FileRepository]
+const repositories = [UserRepository, FileRepository, FolderRepository]
 
 @Module({
   imports: [CqrsModule, AuthModule, AwsS3Module],

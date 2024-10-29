@@ -1,6 +1,7 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
 import { FileRepository } from '../../../../infrastructure/file.repository'
-import { AwsS3Service } from '../../../awsS3/aws.s3.service'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { FolderRepository } from '../../../../infrastructure/folder.repository'
 
 export class updateFolderCommand implements ICommand {
     constructor(
@@ -15,20 +16,20 @@ export class updateFolderCommand implements ICommand {
 export class updateFolderCommandHandler implements ICommandHandler<updateFolderCommand, void> {
     constructor(
         private readonly fileRepository: FileRepository,
-        private readonly aswS3Service: AwsS3Service,
+        private readonly folderRepository: FolderRepository
     ) { }
 
     async execute({ data }: updateFolderCommand): Promise<void> {
         const { userId, folderId, newFolderName } = data
 
         //check rights to access folder
-        await this.fileRepository.isUserFolder({
+        await this.folderRepository.isUserFolder({
             userId,
             folderId
         })
 
         try {
-            const folder = await this.fileRepository.getFolderById(folderId)
+            const folder = await this.folderRepository.getFolderById(folderId)
 
             //check duplicates name in files or folders
             await this.fileRepository.checkDuplicateNames({
@@ -36,13 +37,13 @@ export class updateFolderCommandHandler implements ICommandHandler<updateFolderC
                 folderId
             })
 
-            await this.fileRepository.updateFolderName({
+            await this.folderRepository.updateFolderName({
                 folderId: folder.id,
                 newFolderName: newFolderName,
             })
 
         } catch (error) {
-            console.log('Update file error', error)
+            throw new HttpException(`Update folder error - ${error}`, HttpStatus.CONFLICT)
         }
     }
 }

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '../providers/database/prisma.service'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class FileRepository {
@@ -47,79 +48,20 @@ export class FileRepository {
     await this.prisma.file.delete({ where: { id: fileId } })
   }
 
-  async createMainFolder({ userId }: { userId: number }) {
-    const mainFolder = await this.prisma.folder.create({
-      data: { userId: userId, mainFolder: true, createdAt: new Date() }
-    })
+  async getRelatedFiles(data: { folderId: number, take: number, skip: number, search: string, sortByFileName: Prisma.SortOrder }) {
+    const { folderId, take, skip, search, sortByFileName } = data
 
-    await this.getRelatedFiles(mainFolder.id)
-  }
+    const [files, count] = await this.prisma.$transaction([
+      this.prisma.folderToFileRelation.findMany({
+        orderBy: [{ fileName: sortByFileName }],
+        // skip: skip,
+        // take: take,
+        where: { folderId: folderId, fileName: { contains: `${search}`, mode: 'insensitive' } }
+      }),
+      this.prisma.folderToFileRelation.count({ where: { folderId } })
+    ])
 
-  async getUserMainFolder(userId: number) {
-
-    return this.prisma.folder.findFirst({
-      where: { userId: userId, mainFolder: true }
-    })
-  }
-
-  async getFolderById(folderId: number) {
-    return this.prisma.folder.findFirst({
-      where: { id: folderId }
-    })
-  }
-
-  async getRelatedFolders(folderId: number) {
-    return this.prisma.folderToFolderRelation.findMany({
-      where: { folderId: folderId }
-    })
-  }
-
-  async getRelatedFiles(folderId: number) {
-    return this.prisma.folderToFileRelation.findMany({
-      where: { folderId: folderId }
-    })
-  }
-
-  async createFolder({
-    userId,
-    folderId,
-    folderName
-  }: {
-    userId: number
-    folderId: number
-    folderName: string
-  }): Promise<void> {
-    const newFolder = await this.prisma.folder.create({
-      data: { userId, folderName, mainFolder: false, createdAt: new Date() }
-    })
-
-    await this.prisma.folderToFolderRelation.create({
-      data: {
-        folderId: folderId,
-        folderInsideId: newFolder.id,
-        folderName
-      }
-    })
-  }
-
-  async updateFolderName(data: { folderId: number, newFolderName: string }) {
-    await this.prisma.folder.update({ where: { id: data.folderId }, data: { folderName: data.newFolderName } })
-  }
-
-  async deleteFolder(data: { folderId: number, userId: number }) {
-    await this.prisma.folder.delete({ where: { id: data.folderId, userId: data.userId } })
-  }
-
-  async isUserFolder(data: { userId: number; folderId: number }): Promise<boolean> {
-    const folder = await this.prisma.folder.findFirst({
-      where: { userId: data.userId, id: data.folderId }
-    })
-
-    if (!folder) {
-      throw new HttpException('You have no rights to access this folder', HttpStatus.BAD_REQUEST)
-    }
-
-    return true
+    return { files, total: count }
   }
 
   async checkDuplicateNames(data: { name: string; folderId: number }): Promise<void> {

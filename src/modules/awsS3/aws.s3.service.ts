@@ -23,7 +23,7 @@ export class AwsS3Service {
           Bucket: this.bucketName,
           Key: `${data.userId}/${data.file.originalname}`,
           Body: data.file.buffer,
-          ContentType: 'image/jpg'
+          ContentType: data.file.mimetype
         })
       )
       return `https://${this.bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${data.userId}/${data.file.originalname}`
@@ -39,7 +39,6 @@ export class AwsS3Service {
         Key: `${data.userId}/${data.fileName}`
       })
     } catch (e) {
-      console.log(e)
       throw new HttpException('AWS S3 Error', HttpStatus.CONFLICT)
     }
 

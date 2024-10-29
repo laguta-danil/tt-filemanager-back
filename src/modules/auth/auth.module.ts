@@ -13,6 +13,7 @@ import { LocalStrategy } from './strategies/local.strategy'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { AuthService } from './auth.service'
 import { FileRepository } from '../../infrastructure/file.repository'
+import { FolderRepository } from '../../infrastructure/folder.repository'
 
 const strategies = [GoogleStrategy, LocalStrategy, JwtStrategy]
 
@@ -34,7 +35,8 @@ const strategies = [GoogleStrategy, LocalStrategy, JwtStrategy]
     FileRepository,
     PrismaService,
     AuthService,
-    Logger
+    Logger,
+    FolderRepository
   ]
 })
-export class AuthModule {}
+export class AuthModule { }

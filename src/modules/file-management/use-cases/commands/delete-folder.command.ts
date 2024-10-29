@@ -1,6 +1,6 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
-import { FileRepository } from '../../../../infrastructure/file.repository'
 import { HttpException, HttpStatus } from '@nestjs/common'
+import { FolderRepository } from '../../../../infrastructure/folder.repository'
 
 export class deleteFolderCommand implements ICommand {
     constructor(
@@ -13,7 +13,7 @@ export class deleteFolderCommand implements ICommand {
 @CommandHandler(deleteFolderCommand)
 export class deleteFolderCommandHandler implements ICommandHandler<deleteFolderCommand, void> {
     constructor(
-        private readonly fileRepository: FileRepository,
+        private readonly folderRepository: FolderRepository
     ) { }
 
     async execute({ data }: deleteFolderCommand): Promise<void> {
@@ -25,9 +25,9 @@ export class deleteFolderCommandHandler implements ICommandHandler<deleteFolderC
         //     userId,
         //     fileId
         // })
+
         try {
-            console.log({ folderId, userId })
-            await this.fileRepository.deleteFolder({ folderId, userId })
+            await this.folderRepository.deleteFolder({ folderId, userId })
 
         } catch (error) {
             throw new HttpException(`Delete folder Error - ${error}`, HttpStatus.CONFLICT)

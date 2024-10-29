@@ -1,6 +1,8 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
 import { FileRepository } from '../../../../infrastructure/file.repository'
 import { AwsS3Service } from '../../../awsS3/aws.s3.service'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { FolderRepository } from '../../../../infrastructure/folder.repository'
 
 export class StoreFileCommand implements ICommand {
   constructor(
@@ -15,6 +17,7 @@ export class StoreFileCommand implements ICommand {
 export class StoreFileCommandHandler implements ICommandHandler<StoreFileCommand, void> {
   constructor(
     private readonly fileRepository: FileRepository,
+    private readonly folderRepository: FolderRepository,
     private readonly aswS3Service: AwsS3Service,
   ) { }
 
@@ -22,7 +25,7 @@ export class StoreFileCommandHandler implements ICommandHandler<StoreFileCommand
     const { file, userId, folderId } = data
 
     //check rights to access folder
-    await this.fileRepository.isUserFolder({
+    await this.folderRepository.isUserFolder({
       userId,
       folderId
     })
@@ -43,7 +46,7 @@ export class StoreFileCommandHandler implements ICommandHandler<StoreFileCommand
       })
 
     } catch (error) {
-      console.log('Create file error', error)
+      throw new HttpException(`Update folder error - ${error}`, HttpStatus.CONFLICT)
     }
   }
 }

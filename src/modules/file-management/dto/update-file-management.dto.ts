@@ -1,4 +1,4 @@
-import { StoreFileDto } from './store-file.dto'
+import { StoreFileDto } from './create-file-management.dto'
 import { IsNumber } from 'class-validator'
 import { Transform } from 'class-transformer'
 

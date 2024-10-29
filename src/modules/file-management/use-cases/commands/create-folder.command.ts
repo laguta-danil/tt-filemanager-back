@@ -1,5 +1,6 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
 import { FileRepository } from '../../../../infrastructure/file.repository'
+import { FolderRepository } from '../../../../infrastructure/folder.repository'
 
 export class CreateFolderCommand implements ICommand {
   constructor(
@@ -12,15 +13,16 @@ export class CreateFolderCommand implements ICommand {
 }
 @CommandHandler(CreateFolderCommand)
 export class CreateFolderCommandHandler implements ICommandHandler<CreateFolderCommand, void> {
-  constructor(private readonly fileRepository: FileRepository) { }
+  constructor(
+    private readonly fileRepository: FileRepository,
+    private readonly folderRepository: FolderRepository
+  ) { }
 
   async execute({ data }: CreateFolderCommand): Promise<void> {
     const { folderName, userId, folderId } = data
 
-    console.log(data)
-
     //check rights to access folder
-    await this.fileRepository.isUserFolder({
+    await this.folderRepository.isUserFolder({
       userId,
       folderId
     })
@@ -31,6 +33,6 @@ export class CreateFolderCommandHandler implements ICommandHandler<CreateFolderC
       folderId: folderId
     })
 
-    await this.fileRepository.createFolder({ userId, folderId, folderName })
+    await this.folderRepository.createFolder({ userId, folderId, folderName })
   }
 }

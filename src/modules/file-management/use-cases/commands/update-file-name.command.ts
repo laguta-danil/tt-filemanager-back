@@ -1,6 +1,7 @@
 import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs'
 import { FileRepository } from '../../../../infrastructure/file.repository'
-import { AwsS3Service } from '../../../awsS3/aws.s3.service'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { FolderRepository } from '../../../../infrastructure/folder.repository'
 
 export class updateFileCommand implements ICommand {
     constructor(
@@ -16,14 +17,14 @@ export class updateFileCommand implements ICommand {
 export class updateFileCommandHandler implements ICommandHandler<updateFileCommand, void> {
     constructor(
         private readonly fileRepository: FileRepository,
-        private readonly aswS3Service: AwsS3Service,
+        private readonly folderRepository: FolderRepository
     ) { }
 
     async execute({ data }: updateFileCommand): Promise<void> {
         const { userId, folderId, fileId, newFileName } = data
 
         //check rights to access folder
-        await this.fileRepository.isUserFolder({
+        await this.folderRepository.isUserFolder({
             userId,
             folderId
         })
@@ -43,7 +44,7 @@ export class updateFileCommandHandler implements ICommandHandler<updateFileComma
             })
 
         } catch (error) {
-            console.log('Update file error', error)
+            throw new HttpException(`Update file error - ${error}`, HttpStatus.CONFLICT)
         }
     }
 }
